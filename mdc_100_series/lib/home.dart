@@ -12,23 +12,113 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ignore_for_file: dead_code
+import 'backdrop.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'model/product.dart';
+import 'model/products_repository.dart';
+import 'supplemental/asymmetric_view.dart';
+
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.category}) : super(key: key);
 
   // TODO: Make a collection of cards (102)
+  List<Card> _buildGridCards(BuildContext context) {
+  List<Product> products = ProductsRepository.loadProducts(Category.all);
+
+  if (products.isEmpty) {
+    return const <Card>[];
+  }
+
+  final ThemeData theme = Theme.of(context);
+  final NumberFormat formatter = NumberFormat.simpleCurrency(
+      locale: Localizations.localeOf(context).toString());
+
+  return products.map((product) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      // TODO: Adjust card heights (103)
+      elevation: 0.0,
+      child: Column(
+        // TODO: Center items on the card (103)
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 18 / 11,
+            child: Image.asset(
+              product.assetName,
+              package: product.assetPackage,
+             // TODO: Adjust the box size (102)
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 8.0),
+              child: Column(
+               // TODO: Align labels to the bottom and center (103)
+               mainAxisAlignment: MainAxisAlignment.end,
+               crossAxisAlignment: CrossAxisAlignment.center,
+                // TODO: Change innermost Column (103)
+                children: <Widget>[
+                 // TODO: Handle overflowing labels (103)
+                 Text(
+                    product.name,
+                    style: theme.textTheme.labelLarge,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    formatter.format(product.price),
+                    style: theme.textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }).toList();
+}
   // TODO: Add a variable for Category (104)
+  final Category category;
+  const HomePage({this.category = Category.all, Key? key}):super(key: key);
   @override
   Widget build(BuildContext context) {
     // TODO: Return an AsymmetricView (104)
+    return AsymmetricView(products : ProductsRepository.loadProducts(Category.all));
     // TODO: Pass Category variable to AsymmetricView (104)
-    return const Scaffold(
+    return AsymmetricView(
+      products: ProductsRepository.loadProducts(category),
+    );
+    return  Scaffold(
       // TODO: Add app bar (102)
+      appBar: AppBar(
+       // TODO: Replace leading menu icon with IconButton (104)
+        leading: IconButton(
+          onPressed: _toggleBackdropLayerVisibility,
+          icon: const Icon(Icons.menu),
+        ),
+        title: const Text('SHRINE'),
+        actions: [IconButton(onPressed: (){
+          print('Search button ');
+        }, 
+        icon: const Icon(Icons.search,
+        semanticLabel: 'search',)),
+        IconButton(onPressed: (){
+          print('Filter button');
+        }, icon: const Icon(Icons.tune,
+        semanticLabel: 'filter',))],
+        ),
       // TODO: Add a grid view (102)
-      body: Center(
-        child: Text('You did it!'),
-      ),
+      body: AsymmetricView(
+        products: ProductsRepository.loadProducts(Category.all),
+      )
+      //TODO: Build a grid of card
       // TODO: Set resizeToAvoidBottomInset (101)
     );
   }
