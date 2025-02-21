@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
 }
   // TODO: Add a variable for Category (104)
   final Category category;
-  const HomePage({this.category = Category.all, Key? key}):super(key: key);
+  //const HomePage({this.category = Category.all, Key? key}):super(key: key);
   @override
   Widget build(BuildContext context) {
     // TODO: Return an AsymmetricView (104)

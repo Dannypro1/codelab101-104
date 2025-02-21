@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
             // spacer
             const SizedBox(height: 60.0),
             //[Passwor]
-            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: 'Password',),),
+            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: 'Password',),obscureText: true,),
             //obscureText : true,
         
             // Add button bar (101)

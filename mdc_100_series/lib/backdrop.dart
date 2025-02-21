@@ -11,6 +11,7 @@ class Backdrop extends StatefulWidget {
   final Widget backLayer;
   final Widget frontTitle;
   final Widget backTitle;
+  final VoidCallback onToggle;
   
 
   const Backdrop({
@@ -19,6 +20,7 @@ class Backdrop extends StatefulWidget {
     required this.backLayer,
     required this.frontTitle,
     required this.backTitle,
+    required this.onToggle,
     
     Key? key,
   }) : super(key: key);
@@ -111,6 +113,7 @@ class _BackdropState extends State<Backdrop>
   void _toggleBackdropLayerVisibility() {
     _controller.fling(
         velocity: _frontLayerVisible ? -_kFlingVelocity : _kFlingVelocity);
+        widget.onToggle();
   }
 
   // TODO: Add BuildContext and BoxConstraints parameters to _buildStack (104)
