@@ -19,10 +19,12 @@ import 'package:intl/intl.dart';
 import 'model/product.dart';
 import 'model/products_repository.dart';
 import 'supplemental/asymmetric_view.dart';
+import 'category_menu_page.dart';
 
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.category}) : super(key: key);
+  final Category category;
+  const HomePage({this.category = Category.all, Key? key,}) : super(key: key);
 
   // TODO: Make a collection of cards (102)
   List<Card> _buildGridCards(BuildContext context) {
@@ -51,6 +53,7 @@ class HomePage extends StatelessWidget {
               product.assetName,
               package: product.assetPackage,
              // TODO: Adjust the box size (102)
+             fit: BoxFit.fitWidth,
             ),
           ),
           Expanded(
@@ -85,7 +88,7 @@ class HomePage extends StatelessWidget {
   }).toList();
 }
   // TODO: Add a variable for Category (104)
-  final Category category;
+ 
   //const HomePage({this.category = Category.all, Key? key}):super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -100,8 +103,10 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
        // TODO: Replace leading menu icon with IconButton (104)
         leading: IconButton(
-          onPressed: _toggleBackdropLayerVisibility,
+          
+          onPressed: (){print('menu');},
           icon: const Icon(Icons.menu),
+          
         ),
         title: const Text('SHRINE'),
         actions: [IconButton(onPressed: (){

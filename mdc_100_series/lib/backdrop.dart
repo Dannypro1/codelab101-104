@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shrine/login.dart';
-
+import 'package:shrine/login.dart';
 import 'model/product.dart';
+import 'login.dart';
+
 
 // TODO: Add velocity constant (104)
 const double _kFlingVelocity = 2.0;
@@ -11,7 +13,7 @@ class Backdrop extends StatefulWidget {
   final Widget backLayer;
   final Widget frontTitle;
   final Widget backTitle;
-  final VoidCallback onToggle;
+ 
   
 
   const Backdrop({
@@ -20,8 +22,6 @@ class Backdrop extends StatefulWidget {
     required this.backLayer,
     required this.frontTitle,
     required this.backTitle,
-    required this.onToggle,
-    
     Key? key,
   }) : super(key: key);
 
@@ -69,6 +69,88 @@ class _FrontLayer extends StatelessWidget {
   }
 }
 // TODO: Add _BackdropTitle class (104)
+class _BackdropTitle extends AnimatedWidget{
+  final void Function() onPress;
+  final Widget frontTitle;
+  final Widget backTitle;
+
+  const _BackdropTitle({
+    Key? key,
+    required Animation<double> listenable,
+    required this.onPress,
+    required this.frontTitle,
+    required this.backTitle,
+
+  }): _listenable = listenable,
+  super(key: key, listenable: listenable);
+  final Animation<double> _listenable;
+
+  @override
+
+  Widget build(BuildContext context)
+  {
+    final Animation<double> animation = _listenable;
+    return DefaultTextStyle(style: Theme.of(context).textTheme.titleLarge!,
+    softWrap: false,
+    overflow: TextOverflow.ellipsis,
+    child: Row(children: [
+      SizedBox(
+        width: 72.0,
+        child: IconButton(
+          padding: const EdgeInsets.only(right: 8.0),
+          onPressed: this.onPress ,
+          icon: Stack(children:[
+            Opacity(opacity: animation.value,
+            child: const ImageIcon(AssetImage('assets/slanted_menu.png')),),
+            FractionalTranslation(
+              translation: Tween<Offset>(
+                begin: Offset.zero,
+                end: const Offset(1.0, 0.0),
+              ).evaluate(animation),
+              child: const ImageIcon(AssetImage('assets/diamond.png')),),
+              FractionalTranslation(
+                translation: Tween<Offset>(
+                begin: Offset.zero,
+                end: const Offset(0.0, 1.0),
+              ).evaluate(animation),
+              child: const ImageIcon(AssetImage('assets/diamond.png')),),
+          ]),),
+      ),
+      // Here, we do a custom cross fade between backTitle and frontTitle.
+        // This makes a smooth animation between the two texts.
+      Stack(
+        children: [
+          Opacity(
+            opacity: CurvedAnimation(
+              parent: ReverseAnimation(animation), 
+              curve: const Interval(0.5, 1.0)
+            ).value,
+            child: FractionalTranslation(
+              translation: Tween<Offset>(
+                begin: Offset.zero,
+                end: const Offset(0.5, 0.0),
+              ).evaluate(animation),
+              child: backTitle,),),
+              Opacity(
+                opacity: CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.5,1.0),
+                ).value,
+                child: FractionalTranslation(
+                  translation: Tween<Offset>(
+                    begin: const Offset(-0.25,0.0),
+                    end: Offset.zero,
+
+                  ).evaluate(animation),
+                  child: frontTitle,
+                ),
+                )
+        ],
+      )
+    ],),
+    );
+  }
+}
 // TODO: Add _BackdropState class (104)
 // TODO: Add _BackdropState class (104)
 class _BackdropState extends State<Backdrop>
@@ -113,7 +195,7 @@ class _BackdropState extends State<Backdrop>
   void _toggleBackdropLayerVisibility() {
     _controller.fling(
         velocity: _frontLayerVisible ? -_kFlingVelocity : _kFlingVelocity);
-        widget.onToggle();
+        
   }
 
   // TODO: Add BuildContext and BoxConstraints parameters to _buildStack (104)
@@ -158,10 +240,17 @@ class _BackdropState extends State<Backdrop>
       elevation: 0.0,
       titleSpacing: 0.0,
       // TODO: Replace leading menu icon with IconButton (104)
+      leading: IconButton(
+        icon: const Icon(Icons.menu),
+        onPressed: _toggleBackdropLayerVisibility,),
       // TODO: Remove leading property (104)
       // TODO: Create title with _BackdropTitle parameter (104)
-      leading: const Icon(Icons.menu),
-      title: const Text('SHRINE'),
+      title: _BackdropTitle(
+        listenable: _controller.view,
+        onPress: _toggleBackdropLayerVisibility,
+        frontTitle: widget.frontLayer,
+        backTitle: widget.backLayer,
+      ),
       actions: <Widget>[
         // TODO: Add shortcut to login screen from trailing icons (104)
         IconButton(

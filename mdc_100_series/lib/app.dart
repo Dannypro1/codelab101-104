@@ -28,10 +28,18 @@ class ShrineApp extends StatefulWidget {
   const ShrineApp({Key? key}) : super(key: key);
 
   @override
-  State<ShrineApp> createState() => _ShrineAppState();
+  _ShrineAppState createState()=> _ShrineAppState();
+
 }
 
 class _ShrineAppState extends State<ShrineApp> {
+  Category _currentCategory = Category.all;
+
+  void _onCategoryTap(Category category) {
+    setState(() {
+      _currentCategory = category;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
